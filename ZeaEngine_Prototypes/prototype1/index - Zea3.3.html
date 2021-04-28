@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Getting Started using Zea CAD</title>
+	<style>
+	body {font-family: Arial;}
+
+	/* Style the tab */
+	.tab {
+	  overflow: hidden;
+	  border: 1px solid #ccc;
+	  background-color: #f1f1f1;
+	}
+
+	/* Style the buttons inside the tab */
+	.tab button {
+	  background-color: inherit;
+	  float: left;
+	  border: none;
+	  outline: none;
+	  cursor: pointer;
+	  padding: 14px 16px;
+	  transition: 0.3s;
+	  font-size: 17px;
+	}
+
+	/* Change background color of buttons on hover */
+	.tab button:hover {
+	  background-color: #ddd;
+	}
+
+	/* Create an active/current tablink class */
+	.tab button.active {
+	  background-color: #ccc;
+	}
+	
+	.appstyle {
+	  background-color: #fff;
+      width:800px;
+	  height:600px;
+	}	
+
+	/* Style the tab content */
+	.tabcontent {
+	  display: none;
+	  padding: 6px 12px;
+	  border: 1px solid #ccc;
+	  border-top: none;
+	  background-color: #000;
+      width:800px;
+	  height:600px;
+	}
+	
+/* Styles for the parent of the canvas */
+#paris_app {
+  position: relative;
+}
+
+/* Styles for the canvas */
+#parisapp {
+  position: absolute;
+}
+
+/* Styles for the parent of the canvas */
+#london_app {
+  position: relative;
+}
+
+/* Styles for the canvas */
+#londonapp {
+  position: absolute;
+}
+
+	
+</style>
+  </head>
+ <body>
+	<div class="tab">
+	  <button class="tablinks" onclick="openCity(event, 'London')" id="defaultOpen">London</button>
+	  <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+	</div>
+
+	<!-- Tab content -->
+	<div id="London" class="tabcontent">
+		<div id="london_app">
+            <canvas id="londonapp" class="appstyle" width="auto" height="auto"></canvas>
+		</div>
+	</div>
+
+	<div id="Paris" class="tabcontent">	
+		<div id="paris_app">
+            <canvas id="parisapp" class="appstyle" width="auto" height="auto"></canvas>
+		</div>
+	</div>
+
+	<script>
+	function openCity(evt, cityName) {
+	  var i, tabcontent, tablinks;
+	  tabcontent = document.getElementsByClassName("tabcontent");
+	  for (i = 0; i < tabcontent.length; i++) {
+		tabcontent[i].style.display = "none";
+	  }
+	  tablinks = document.getElementsByClassName("tablinks");
+	  for (i = 0; i < tablinks.length; i++) {
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	  }
+	  document.getElementById(cityName).style.display = "block";
+	  evt.currentTarget.className += " active";
+	}
+	document.getElementById("defaultOpen").click();
+	</script>
+
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine@3.3/dist/index.umd.js"> </script>
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/@zeainc/zea-engine@3.3/dist/plugins.umd.js"></script>
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/@zeainc/zea-cad@3"></script>
+  <script type="module"> 
+    const { Vec3, Scene, GLRenderer, Color } = globalThis.zeaEngine
+    const { CADAsset, GLCADPass } = globalThis.zeaCad
+
+    const domelement = document.getElementById('londonapp')
+    const _scene = new Scene()
+    const color = new Color("#e6f9ff");
+    _scene.getSettings().getParameter("BackgroundColor").setValue(color);
+
+    const colorGrid = new Color("#999999");
+    _scene.setupGrid(30, 60, colorGrid);
+ 
+    const renderer = new GLRenderer(domelement)
+    renderer.setScene(_scene)
+
+	const cadpass = new GLCADPass()
+	renderer.addPass(cadpass)
+
+	const asset = new CADAsset()
+	
+	_scene.getRoot().addChild(asset)
+    renderer.getViewport().getCamera().setPositionAndTarget(new Vec3(20, 20, 20), new Vec3(0, 0, 0))
+
+	asset.on('loaded', () => {
+	  renderer.frameall()
+	})
+    renderer.resumeDrawing()
+	
+	
+	
+    const domelement2 = document.getElementById('parisapp')
+    const _scene2 = new Scene()
+    const color2 = new Color("#e6f9ff");
+    _scene2.getSettings().getParameter("BackgroundColor").setValue(color2);
+
+    _scene2.setupGrid(30, 60)
+ 
+    const renderer2 = new GLRenderer(domelement2)
+    renderer2.setScene(_scene2)
+
+	const cadpass2 = new GLCADPass()
+	renderer2.addPass(cadpass2)
+
+	const asset2 = new CADAsset()
+	
+	_scene2.getRoot().addChild(asset2)
+    renderer2.getViewport().getCamera().setPositionAndTarget(new Vec3(20, 20, 20), new Vec3(0, 0, 0))
+
+	asset2.on('loaded', () => {
+	  renderer2.frameall()
+	})
+    renderer2.resumeDrawing()
+	
+
+  </script>
+  
+  </body>
+  
+  </html>
+  
